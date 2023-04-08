@@ -2,9 +2,10 @@ import { useQuery } from "react-query";
 
 import { postTransactions } from "../queries";
 import { Transaction } from "..";
+import { useAtms } from "@/atms/hooks/useAtms";
 
 interface UsePostTransactions {
-  atmId: number[];
+  atmId: number[] | string;
   date0: string;
   date1: string;
   aidId?: string;
@@ -13,6 +14,13 @@ interface UsePostTransactions {
 }
 
 export const usePostTransactions = (values: UsePostTransactions) => {
+  console.log(values);
+  if (values.atmId === "") {
+    const { atms } = useAtms();
+    const allAtms = atms.map((atm) => atm.id);
+
+    values.atmId = allAtms;
+  }
   const { data, isLoading, error } = useQuery(["transactions", values], () =>
     postTransactions(values)
   );

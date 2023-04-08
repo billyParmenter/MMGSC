@@ -39,6 +39,7 @@ import { AtmsSelect } from "@/atms/components/AtmsSelect";
 import { TransactionsTable } from "@/transactions";
 import { usePostTransactions } from "@/transactions/hooks/usePostTransactions";
 import React, { useState } from "react";
+import { useAtms } from "@/atms/hooks/useAtms";
 
 export const DashboardShell = () => {
   const [date1, setDate1] = useState("");
