@@ -49,7 +49,7 @@ export const TransactionsTable = ({ transactions }: TransactionsTableProps) => {
                   s.substring(12, 14);
                 return (
                   <>
-                    <Tr>
+                    <Tr key={transaction.ref}>
                       <Td>{date}</Td>
                       <Td>{transaction.atm.txt}</Td>
                       <Td>{transaction.pan}</Td>
@@ -59,7 +59,7 @@ export const TransactionsTable = ({ transactions }: TransactionsTableProps) => {
 
                     {transaction.key.map(function (key) {
                       return (
-                        <Tr>
+                        <Tr key={key.id}>
                           <Td></Td>
                           <Td></Td>
                           <Td></Td>

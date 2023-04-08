@@ -10,6 +10,7 @@ export interface AidsSelectProps {
 
 // export const AidsSelect = ({ aids, onChange }: AidsSelectProps) => {
 export const AidsSelect = ({ onChange }: AidsSelectProps) => {
+  // eslint-disable-next-line no-console
   const { aids } = useAids();
 
   return (
@@ -17,7 +18,9 @@ export const AidsSelect = ({ onChange }: AidsSelectProps) => {
       {aids ? (
         <Select onChange={onChange} placeholder="All applications">
           {aids?.map((aid) => (
-            <option value={aid.id}>{aid.name}</option>
+            <option key={aid.id} value={aid.id}>
+              {aid.name}
+            </option>
           ))}
         </Select>
       ) : (

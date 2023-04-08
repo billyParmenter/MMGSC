@@ -62,6 +62,7 @@ export const DashboardShell = () => {
 
   const { transactions, isLoading: transactionsIsLoading } =
     usePostTransactions({
+      // @ts-ignore
       atmId: atmId,
       date0: date1,
       date1: date2,
@@ -265,7 +266,9 @@ export const DashboardShell = () => {
                 Date
                 <DateRangePicker
                   onChange={(event) => {
+                    // @ts-ignore
                     setDate1(parseDate(event[0]));
+                    // @ts-ignore
                     setDate2(parseDate(event[1]));
                   }}
                   size="lg"
@@ -277,6 +280,7 @@ export const DashboardShell = () => {
                 <AtmsSelect
                   // atms={atms}
                   onChange={(event) => {
+                    // @ts-ignore
                     let value = event.target.value;
                     setAtmId(value.split(",").map(Number));
                   }}
@@ -294,7 +298,7 @@ export const DashboardShell = () => {
               <Box flex="1" p="1">
                 EMV CHIP AID
                 <AidsSelect
-                  // aids={aids}
+                  // @ts-ignore
                   onChange={(event) => setAidId(event.target.value)}
                 />
               </Box>

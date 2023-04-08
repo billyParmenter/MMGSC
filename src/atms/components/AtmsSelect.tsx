@@ -18,7 +18,9 @@ export const AtmsSelect = ({ onChange }: AtmsSelectProps) => {
         <Select onChange={onChange}>
           <option value={allAtms.toString()}>All ATMS</option>
           {atms?.map((atm) => (
-            <option value={atm.id}>{atm.name}</option>
+            <option key={atm.id} value={atm.id}>
+              {atm.name}
+            </option>
           ))}
         </Select>
       ) : (
