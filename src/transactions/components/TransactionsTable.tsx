@@ -1,12 +1,9 @@
 import {
   Box,
-  Heading,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
-  Tfoot,
   Th,
   Thead,
   Tr,
@@ -14,7 +11,7 @@ import {
 import { Transaction } from "..";
 
 export interface TransactionsTableProps {
-  transactions?: Transaction[];
+  transactions: Transaction[];
 }
 
 export const TransactionsTable = ({ transactions }: TransactionsTableProps) => {
@@ -23,27 +20,62 @@ export const TransactionsTable = ({ transactions }: TransactionsTableProps) => {
       {transactions ? (
         <TableContainer>
           <Table variant="simple">
-            <TableCaption>Imperial to metric conversion factors</TableCaption>
             <Thead>
               <Tr>
-                <Th>Name</Th>
-                <Th isNumeric>Amount</Th>
-                <Th>Status</Th>
+                <Th>Date</Th>
+                <Th>ATM ID</Th>
+                <Th>Customer PAN</Th>
+                <Th>Time</Th>
+                <Th>Description</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {transactions?.map((transaction) => (
-                <Tr>
-                  <Td>{transaction.name}</Td>
-                  <Td isNumeric>{transaction.amount}</Td>
-                  <Td>{transaction.status}</Td>
-                </Tr>
-              ))}
+              {transactions.map(function (transaction) {
+                let s = String(transaction.devTime);
+                let date =
+                  s.substring(6, 8) +
+                  "/" +
+                  s.substring(4, 6) +
+                  "/" +
+                  s.substring(0, 4);
+
+                let time =
+                  date +
+                  " " +
+                  s.substring(8, 10) +
+                  ":" +
+                  s.substring(10, 12) +
+                  ":" +
+                  s.substring(12, 14);
+                return (
+                  <>
+                    <Tr>
+                      <Td>{date}</Td>
+                      <Td>{transaction.atm.txt}</Td>
+                      <Td>{transaction.pan}</Td>
+                      <Td>{time}</Td>
+                      <Td>Ref: {transaction.ref}</Td>
+                    </Tr>
+
+                    {transaction.key.map(function (key) {
+                      return (
+                        <Tr>
+                          <Td></Td>
+                          <Td></Td>
+                          <Td></Td>
+                          <Td></Td>
+                          <Td>{key.descr}</Td>
+                        </Tr>
+                      );
+                    })}
+                  </>
+                );
+              })}
             </Tbody>
           </Table>
         </TableContainer>
       ) : (
-        <Box>Oops</Box>
+        <></>
       )}
     </Box>
   );

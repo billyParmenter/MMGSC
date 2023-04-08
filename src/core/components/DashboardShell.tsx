@@ -10,21 +10,68 @@ import {
   Icon,
   IconButton,
   Input,
-  InputGroup,
-  InputLeftElement,
   useDisclosure,
   Text,
+  Button,
+  ButtonGroup,
+  Heading,
+  Spacer,
+  NumberInput,
+  NumberInputField,
+  AlertDialog,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
-import { FiMenu, FiSearch } from "react-icons/fi";
+import { FiMenu } from "react-icons/fi";
 import { FaBell } from "react-icons/fa";
-import { MdHome } from "react-icons/md";
-import { ReactNode } from "react";
+import {
+  GrTransaction,
+  GrSettingsOption,
+  GrUserSettings,
+  GrAtm,
+  GrUser,
+} from "react-icons/gr";
+import { DateRangePicker } from "rsuite";
+import { AidsSelect } from "@/aids/components";
+import { AtmsSelect } from "@/atms/components/AtmsSelect";
+import { TransactionsTable } from "@/transactions";
+import { usePostTransactions } from "@/transactions/hooks/usePostTransactions";
+import React, { useState } from "react";
 
-export interface DashboardShellProps {
-  children: ReactNode;
-}
+export const DashboardShell = () => {
+  const [date1, setDate1] = useState("");
+  const [date2, setDate2] = useState("");
+  const [atmId, setAtmId] = useState("");
+  const [pan, setPan] = useState("");
+  const [aidId, setAidId] = useState("");
+  const [ref, setRef] = useState("");
 
-export const DashboardShell = ({ children }: DashboardShellProps) => {
+  const parseDate = (dateToParse: string) => {
+    let d = new Date(0);
+    let s = String(dateToParse);
+    let date = s.substring(8, 10) + s.substring(3, 7) + s.substring(10, 24);
+    d.setUTCSeconds(Date.parse(date) / 1000);
+    return (
+      String(d.getFullYear()) +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      String(d.getDate()).padStart(2, "0")
+    );
+  };
+
+  const { transactions, isLoading: transactionsIsLoading } =
+    usePostTransactions({
+      atmId: atmId,
+      date0: date1,
+      date1: date2,
+      pan: pan,
+      aidId: aidId,
+      ref: parseInt(ref),
+    });
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const sidebar = useDisclosure();
 
   const NavItem = (props: any) => {
@@ -37,7 +84,7 @@ export const DashboardShell = ({ children }: DashboardShellProps) => {
         rounded="md"
         py="3"
         cursor="pointer"
-        color="whiteAlpha.700"
+        color="blackAlpha.700"
         _hover={{
           bg: "blackAlpha.300",
           color: "whiteAlpha.900",
@@ -79,8 +126,25 @@ export const DashboardShell = ({ children }: DashboardShellProps) => {
       w="60"
       {...props}
     >
+      <AlertDialog isOpen={isOpen} onClose={onClose}>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader
+              fontSize="lg"
+              fontWeight="bold"
+              textAlign="center"
+            >
+              Not implemented
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <Button onClick={onClose}>Close</Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
       <Flex px="4" py="5" align="center">
-        <Text fontSize="2xl" ml="2" color="white" fontWeight="semibold">
+        <Text fontSize="2xl" ml="2" color="black" fontWeight="semibold">
           MMGSC
         </Text>
       </Flex>
@@ -91,7 +155,19 @@ export const DashboardShell = ({ children }: DashboardShellProps) => {
         color="gray.600"
         aria-label="Main Navigation"
       >
-        <NavItem icon={MdHome}>Home</NavItem>
+        <NavItem icon={GrTransaction}>Transactions</NavItem>
+        <NavItem onClick={onOpen} icon={GrSettingsOption}>
+          Settings
+        </NavItem>
+        <NavItem onClick={onOpen} icon={GrUserSettings}>
+          User management
+        </NavItem>
+        <NavItem onClick={onOpen} icon={GrAtm}>
+          ATM management
+        </NavItem>
+        <NavItem onClick={onOpen} icon={GrUser}>
+          My account
+        </NavItem>
       </Flex>
     </Box>
   );
@@ -131,7 +207,7 @@ export const DashboardShell = ({ children }: DashboardShellProps) => {
         <Flex
           as="header"
           align="center"
-          justify="space-between"
+          justify="right"
           w="full"
           px="4"
           bg="white"
@@ -144,6 +220,7 @@ export const DashboardShell = ({ children }: DashboardShellProps) => {
         >
           <IconButton
             aria-label="Menu"
+            mr="auto"
             display={{
               base: "inline-flex",
               md: "none",
@@ -152,33 +229,92 @@ export const DashboardShell = ({ children }: DashboardShellProps) => {
             icon={<FiMenu />}
             size="sm"
           />
-          <InputGroup
-            w="96"
-            display={{
-              base: "none",
-              md: "flex",
-            }}
-          >
-            <InputLeftElement color="gray.500">
-              <FiSearch />
-            </InputLeftElement>
-            <Input placeholder="Search for articles..." />
-          </InputGroup>
 
           <Flex align="center">
-            <Icon color="gray.500" as={FaBell} cursor="pointer" />
+            <Icon
+              onClick={onOpen}
+              color="gray.500"
+              as={FaBell}
+              cursor="pointer"
+            />
             <Avatar
               ml="4"
               size="sm"
               name="anubra266"
-              src="https://avatars.githubusercontent.com/u/30869823?v=4"
+              src="https://www.pinclipart.com/picdir/middle/148-1486972_mystery-man-avatar-circle-clipart.png"
               cursor="pointer"
+              onClick={onOpen}
             />
           </Flex>
         </Flex>
 
         <Box as="main" p="4">
-          {children}
+          <Box>
+            <Flex minWidth="max-content" alignItems="center" gap="2">
+              <Box p="2">
+                <Heading size="md">All Transactions</Heading>
+              </Box>
+              <Spacer />
+              <ButtonGroup gap="2">
+                <Button onClick={onOpen}>Print</Button>
+                <Button onClick={onOpen}>Export</Button>{" "}
+              </ButtonGroup>
+            </Flex>
+            <Flex>
+              <Box flex="1" p="1">
+                Date
+                <DateRangePicker
+                  onChange={(event) => {
+                    setDate1(parseDate(event[0]));
+                    setDate2(parseDate(event[1]));
+                  }}
+                  size="lg"
+                  block
+                />
+              </Box>
+              <Box flex="1" p="1">
+                ATM ID
+                <AtmsSelect
+                  // atms={atms}
+                  onChange={(event) => {
+                    let value = event.target.value;
+                    setAtmId(value.split(",").map(Number));
+                  }}
+                />
+              </Box>
+              <Box flex="1" p="1">
+                Customer PAN Number
+                <Input
+                  onChange={(event) => {
+                    setPan(event.currentTarget.value);
+                  }}
+                  placeholder="Partial or full card number"
+                />
+              </Box>
+              <Box flex="1" p="1">
+                EMV CHIP AID
+                <AidsSelect
+                  // aids={aids}
+                  onChange={(event) => setAidId(event.target.value)}
+                />
+              </Box>
+              <Box flex="1" p="1">
+                <NumberInput
+                  onChange={(event) => setRef(event)}
+                  max={9999}
+                  keepWithinRange={true}
+                >
+                  Transaction Serial Number
+                  <NumberInputField placeholder="4 digit number" />
+                </NumberInput>
+              </Box>
+            </Flex>
+          </Box>
+          {!transactionsIsLoading ? (
+            <TransactionsTable transactions={transactions} />
+          ) : (
+            <p>Loading</p>
+          )}
         </Box>
       </Box>
     </Box>
