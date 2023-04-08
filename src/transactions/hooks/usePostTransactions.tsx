@@ -15,8 +15,8 @@ interface UsePostTransactions {
 
 export const usePostTransactions = (values: UsePostTransactions) => {
   console.log(values);
+  const { atms } = useAtms();
   if (values.atmId === "") {
-    const { atms } = useAtms();
     const allAtms = atms.map((atm) => atm.id);
 
     values.atmId = allAtms;

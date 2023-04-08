@@ -2,7 +2,7 @@ import http from "@/lib/http";
 import { Transaction } from "..";
 
 interface PostTransactions {
-  atmId: number[];
+  atmId: number[] | string;
   date0: string;
   date1: string;
   aidId?: string;
