@@ -15,12 +15,17 @@ export interface NotImplementedButtonProps {
 
 export const NotImplementedButton = ({ value }: NotImplementedButtonProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
 
   return (
     <>
       <Button onClick={onOpen}>{value}</Button>
 
-      <AlertDialog isOpen={isOpen} onClose={onClose}>
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader

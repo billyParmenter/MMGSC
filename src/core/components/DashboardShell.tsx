@@ -72,6 +72,7 @@ export const DashboardShell = () => {
     });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
 
   const sidebar = useDisclosure();
 
@@ -127,7 +128,11 @@ export const DashboardShell = () => {
       w="60"
       {...props}
     >
-      <AlertDialog isOpen={isOpen} onClose={onClose}>
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader
